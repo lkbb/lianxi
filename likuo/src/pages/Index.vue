@@ -2,14 +2,19 @@
   <div>
     <Upload/>
     <section class="list">
-      <li class="p" @click="clickType">
+      <li class="p" @click="typeClick">
         <span>服务类型</span>
-        <span>{{info.type}}></span>
+        <span>{{form.type}}></span>
+      </li>
+      <CityPicker/>
+      <li class="p">
+        <span>服务费</span>
+        <span class="text">￥399</span>
       </li>
     </section>
-    <section>
-      <van-popup v-model="showType" position="bottom" :overlay="true">
-        <van-picker :columns="typeArray" @change="onChange"  @cancel="onCancel" show-toolbar title="请选择服务类型" @confirm="onConfirm"/>
+    <section class="popup">
+      <van-popup v-model="showType" position="bottom" overlay>
+        <van-picker :columns="typeArray" show-toolbar title="服务类型" @cancel="cancelType" @confirm="confirmType"/>
       </van-popup>
     </section>
   </div>
@@ -17,34 +22,35 @@
 
 <script>
 import Upload from '@/components/Upload';
+import CityPicker from '@/components/CityPicker';
 export default {
   data(){
     return {
       showType: false,
       typeArray: ["补驾照", "换驾照"],
-      info: {
+      form: {
         type: '补驾照'
       }
     }
   },
   components: {
-    Upload
+    Upload,
+    CityPicker
   },
-  methods:{
-    onChange(picker,values){
-      // console.log('picker',picker,values);
+  methods: {
+    typeClick(){
+      this.showType = true;
     },
-    onCancel(e){
+    cancelType(){
       this.showType = false;
     },
-    onConfirm(value){
-      // console.log('value...', value);
-      this.info.type = value;
-      this.onCancel();
-    },
-    clickType(){
-      this.showType = true;
+    confirmType(value){
+      this.form.type = value;
+      this.cancelType();
     }
+  },
+  mounted(){
+    fetch('/api/ExchangeJiaZhao/getCostList?order_type=1&city_id=110100000000&province_id=110')
   }
 }
 </script>
