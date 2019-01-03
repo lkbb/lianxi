@@ -71,14 +71,24 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.runtime.esm.js',
+      '@': path.resolve(__dirname, './src')
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
   devServer: {
     historyApiFallback: true,
     noInfo: true,
-    overlay: true
+    overlay: true,
+    proxy:{
+      '/api':{
+        target:'http://chezhu-test.eclicks.cn/',
+        changeOrigin:true,
+        pathRewrite:{
+          '/api':'/'
+        }
+      }
+    }
   },
   performance: {
     hints: false
