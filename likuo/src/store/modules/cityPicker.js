@@ -1,42 +1,50 @@
-import {cityList, costList} from '@/api/index';
-
+//引入封装请求方法
+import {cityList, costList} from '../../api/index'
 const state = {
   // 签发城市列表
   cityList: [],
-  // 可补换城市列表
   costList: [],
   // 选择的签发城市
   city: [],
-  // 选择的补换城市
+  // 默认的补换的选中下标
+  costDeftindex:0,
   cost: []
 }
 
 const mutations = {
-  updateState(state, action){
-    state = Object.assign(state, action);
+  //根据数据进行更新
+  updateState(state,action){
+    console.log(state,action,'actions....')
+    state = Object.assign(state,action)
   }
 }
 
 const actions = {
-  // 获取签发城市列表
+  //获取签发城市列表
   async getCityList({commit}){
-    let res = await cityList();
+    //调用引入的请求方法
+    let res = await cityList()
     res.data.forEach(item=>{
       item.list.forEach(value=>{
-        delete value.list;
+        delete value.list //删除数据中的区的数据
       })
     })
-    commit('updateState', {cityList: res.data})
-    console.log('res...', res);
+    //不直接赋值，提交一个mutations
+    commit('updateState',{cityList:res.data})
   },
-  // 获取可补换的城市列表
-  async getCostList({commit,state}, action){
-    let proIndex = state.cityList.findIndex(item=>item.name==state.city[0]),
-        cityIndex = state.cityList[proIndex].list.findIndex(item=>item.name==state.city[1]);
-    let res = await costList(1, state.cityList[proIndex].id, state.cityList[proIndex].list[cityIndex].id);
-    console.log('res...', res);
+
+  //获取可补换的城市列表
+  async getCostList({commit,state},action) {
+    //获取省份，市区下标
+    let proIndex = state.cityList.findIndex(item=>item.name == state.city[0])
+    let cityIndex = state.cityList[proIndex].list.findIndex(item=>item.name==state.city[1])
+    //根据下标进行匹配
+    let res = await costList(1,state.cityList[cityIndex].id, state.cityList[proIndex].list[cityIndex].id)
+    commit('updateState',{costList:res.data})
+    
   }
 }
+
 
 export default {
   namespaced: true,
