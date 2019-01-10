@@ -1,10 +1,9 @@
-//引入JSBridge
-import JSBridge from '../util/JSBridge'
+import JSBridge from '@/util/JSBridge.js';
+
 // 封装请求方法
 function sendRequest(url, method = 'GET', data = {}) {
   let params = {
       method,
-      //为了让浏览器发送包含凭据的请求，要将这个添加
       credentials: 'include'
   };
   // 判断如果是一个post请求，带上请求体信息
@@ -24,15 +23,18 @@ function sendRequest(url, method = 'GET', data = {}) {
     .then(body => body);
 }
 
-//唤醒登录
+// 唤醒登陆
 export let goLogin = ()=>{
-  JSBridge.invoke('app','login',{
-    //强制刷新
-    loginCallBackName:()=>window.reload()
-  })
+  JSBridge.invoke('app', 'login', {
+    loginCallBackName: ()=>window.reload()
+  });
+}
+// 唤起分享
+export let doShare = ()=>{
+  JSBridge.invoke('ui', 'shareMessage');
 }
 
-//唤起支付
+// 唤起支付
 export let goPay = ()=>{
   JSBridge.invoke('app', 'pay', {
     price: 398.00,
@@ -42,14 +44,13 @@ export let goPay = ()=>{
   });
 }
 
-//图片上传
-export let uploadImg = (type)=> {
-  return new Promise((resolve,reject)=>{
-    //device 是项目自带的命名空间
-    JSBridge.invoke('device','chooseImage', {
+// 图片上传
+export let uploadImg = (type)=>{
+  return new Promise((resolve, reject)=>{
+    JSBridge.invoke('device', 'chooseImage', {
       type,
-      chooseCallbackName:function(res){
-        resolve(res)
+      chooseCallbackName: function(res){
+        resolve(res);
       }
     })
   })
@@ -62,11 +63,11 @@ export let cityList = ()=>{
 
 // 获取可补换的城市
 export let costList = (...params)=>{
-  console.log(params,'params')
+  // console.log('params...', params);
   return sendRequest(`/api/ExchangeJiaZhao/getCostList?order_type=${params[0]}&province_id=${params[1]}&city_id=${params[2]}`)
 }
 
-//判断用户是否是VIP
+// 获取用户是否是会员
 export let isVip = ()=>{
   return sendRequest('https://vip.chelun.com/api/status')
 }
